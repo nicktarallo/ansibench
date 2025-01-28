@@ -127,9 +127,20 @@ int main(int argc, char **argv)
         printf("Average rolled and unrolled performance:\n\n");
         printf("    Reps Time(s) DGEFA   DGESL  OVERHEAD    KFLOPS\n");
         printf("----------------------------------------------------\n");
-        nreps=1;
+        /*
+	nreps=1;
         while (linpack(nreps,arsize)<10.)
             nreps*=2;
+	*/
+	nreps=8;
+	REAL total_time = 0;
+	int i;
+	for (i = 0; i < 10; i++) {
+	    REAL time_taken = linpack(nreps,arsize);
+	    total_time += time_taken;
+	}
+	printf("\n");
+	printf("Average over 10 times: %f seconds", total_time / 10.0);
         free(mempool);
         printf("\n");
 	if (argc > 1) break;

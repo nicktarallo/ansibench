@@ -1,0 +1,44 @@
+gcc  -I./include -g -ansi -lm  ./src/linpack.c -o./bin/linpacksp -DSP 
+gcc  -I./include -g -ansi -lm  ./src/linpack.c -o./bin/linpackdp 
+Mon Jan 27 21:14:09 EST 2025
+Running LINPACK...
+LINPACK benchmark, Single precision.
+Machine precision:  6 digits.
+Array size 2500 X 2500.
+Memory required:  24434K.
+Average rolled and unrolled performance:
+
+    Reps Time(s) DGEFA   DGESL  OVERHEAD    KFLOPS
+----------------------------------------------------
+       8  22.58  98.92%   0.24%   0.84%  932583.812
+       8  22.52  98.94%   0.24%   0.82%  935027.062
+       8  22.51  98.93%   0.24%   0.83%  935432.562
+       8  22.53  98.94%   0.24%   0.82%  934444.688
+       8  22.52  98.94%   0.24%   0.82%  934873.000
+       8  22.52  98.94%   0.24%   0.82%  934889.938
+       8  22.52  98.94%   0.24%   0.82%  935128.500
+       8  22.54  98.94%   0.24%   0.82%  934113.062
+       8  22.55  98.93%   0.24%   0.83%  933904.625
+       8  22.52  98.94%   0.24%   0.82%  934850.000
+
+Average over 10 times: 22.532637 seconds
+LINPACK benchmark, Double precision.
+Machine precision:  15 digits.
+Array size 2500 X 2500.
+Memory required:  48857K.
+Average rolled and unrolled performance:
+
+    Reps Time(s) DGEFA   DGESL  OVERHEAD    KFLOPS
+----------------------------------------------------
+       8  22.64  98.95%   0.24%   0.82%  930151.695
+       8  22.63  98.97%   0.24%   0.79%  930177.382
+       8  22.66  98.96%   0.24%   0.80%  929163.579
+       8  22.69  98.97%   0.24%   0.79%  927835.282
+       8  22.68  98.97%   0.24%   0.79%  928334.929
+       8  22.68  98.97%   0.24%   0.79%  928199.467
+       8  22.67  98.97%   0.24%   0.80%  928704.711
+       8  22.65  98.96%   0.24%   0.80%  929231.922
+       8  22.69  98.97%   0.24%   0.79%  927900.955
+       8  22.67  98.97%   0.24%   0.80%  928554.896
+
+Average over 10 times: 22.664196 seconds

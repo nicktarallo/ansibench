@@ -76,6 +76,11 @@ void P0(void);
 void P3(double X, double Y, double *Z);
 #define USAGE	"usage: whetdc [-c] [loops]\n"
 
+static double second(void)
+{
+    return ((double)((double)clock()/(double)CLOCKS_PER_SEC));
+}
+
 /*
 	COMMON T,T1,T2,E1(4),J,K,L
 */
@@ -94,7 +99,7 @@ main(int argc, char *argv[])
 
 	/* added for this version */
 	long loopstart;
-	long startsec, finisec;
+	double startsec, finisec;
 	float KIPS;
 	int continuous;
 
@@ -114,13 +119,17 @@ main(int argc, char *argv[])
 		II++;
 	}
 
+	double total_time = 0;
+	int num_loops = 10;
+	int curr_loop = 0;
+
 LCONT:
 /*
 C
 C	Start benchmark timing at this point.
 C
 */
-	startsec = time(0);
+	startsec = second();
 
 /*
 C
@@ -355,7 +364,7 @@ C
 C      Stop benchmark timing at this point.
 C
 */
-	finisec = time(0);
+	finisec = second();
 
 /*
 C----------------------------------------------------------------
@@ -372,17 +381,24 @@ C--------------------------------------------------------------------
 		return(1);
 	}
 
-	printf("Loops: %ld, Iterations: %d, Duration: %ld sec.\n",
+	printf("Loops: %ld, Iterations: %d, Duration: %lf sec.\n",
 			LOOP, II, finisec-startsec);
 
-	KIPS = (100.0*LOOP*II)/(float)(finisec-startsec);
+	KIPS = (100.0*LOOP*II)/(double)(finisec-startsec);
 	if (KIPS >= 1000.0)
 		printf("C Converted Double Precision Whetstones: %.1f MWIPS\n", KIPS/1000.0);
 	else
 		printf("C Converted Double Precision Whetstones: %.1f KWIPS\n", KIPS);
-
+	total_time += (finisec-startsec);
+	curr_loop++;
 	if (continuous)
 		goto LCONT;
+	else {
+		if (curr_loop < num_loops) {
+			goto LCONT;
+		}
+		printf("Average time: %lf seconds", total_time/(double)num_loops);
+	}
 
 	return(0);
 }
