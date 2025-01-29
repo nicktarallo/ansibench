@@ -1,1 +1,1 @@
-OPTLEVEL = -fif-conversion
+OPTLEVEL = -ffast-math
