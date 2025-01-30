@@ -125,7 +125,7 @@ main(int argc, char *argv[])
 	int curr_loop = 0;
 	double benchmark_ilps = 96781414; /* This is the benchmark int loops per second that was computed on the vector cluster */
 	double total_int_loops_per_second = 0; /* Use this to compute average int loops per second.*/
-	double multiplied_il_rate = 1.0;
+	double multiplied_ic_rate = 1.0;
 
 LCONT:
 /*
@@ -394,10 +394,10 @@ C--------------------------------------------------------------------
 	/* This is for the new metric computation: */
 	double int_time = intendsec - intstartsec;
 	double int_loops_per_sec = ((double)N6) / int_time;
-	double il_rate = int_loops_per_sec / benchmark_ilps;
+	double ic_rate = int_loops_per_sec / benchmark_ilps;
 	
 	printf("Integer Arithmetic Loops (N6): %ld, Time to complete: %lf, IntLoops/second: %lf\n", N6, int_time, int_loops_per_sec);
-	printf("ILRate: %lf\n", il_rate);
+	printf("ICRate: %lf\n", ic_rate);
 
 	KIPS = (100.0*LOOP*II)/(double)(finisec-startsec);
 	if (KIPS >= 1000.0)
@@ -406,7 +406,7 @@ C--------------------------------------------------------------------
 		printf("C Converted Double Precision Whetstones: %.1f KWIPS\n", KIPS);
 	total_time += (finisec-startsec);
 	total_int_loops_per_second += int_loops_per_sec;
-	multiplied_il_rate *= il_rate;
+	multiplied_ic_rate *= ic_rate;
 	curr_loop++;
 	if (continuous)
 		goto LCONT;
@@ -416,7 +416,7 @@ C--------------------------------------------------------------------
 		}
 		printf("Average time: %lf seconds\n", total_time/(double)num_loops);
 		printf("Average IntLoops/second: %lf\n", total_int_loops_per_second/(double)num_loops);
-		printf("Average ILRate (Geometric Mean) %lf\n", pow(multiplied_il_rate, 1.0 / (double)num_loops));
+		printf("Average ICRate (Geometric Mean) %lf\n", pow(multiplied_ic_rate, 1.0 / (double)num_loops));
 	}
 
 	return(0);
