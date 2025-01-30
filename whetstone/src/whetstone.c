@@ -102,6 +102,7 @@ main(int argc, char *argv[])
 	double startsec, finisec;
 	float KIPS;
 	int continuous;
+	double intstartsec, intendsec; /* Define these to help compute our new metric by getting intLoopsPerSecond. */
 
 	loopstart = 1000;		/* see the note about LOOP below */
 	continuous = 0;
@@ -122,6 +123,9 @@ main(int argc, char *argv[])
 	double total_time = 0;
 	int num_loops = 10;
 	int curr_loop = 0;
+	double benchmark_ilps = 96781414; /* This is the benchmark int loops per second that was computed on the vector cluster */
+	double total_int_loops_per_second = 0; /* Use this to compute average int loops per second.*/
+	double multiplied_il_rate = 1.0;
 
 LCONT:
 /*
@@ -153,6 +157,7 @@ C
 	JJ = 1;
 
 IILOOP:
+	/* printf("LOOP: %ld\n", LOOP); */
 	N1  = 0;
 	N2  = 12 * LOOP;
 	N3  = 14 * LOOP;
@@ -249,11 +254,12 @@ C	Module 5: Omitted
 C 	Module 6: Integer arithmetic
 C
 */
-
+	
 	J = 1;
 	K = 2;
 	L = 3;
-
+	/* printf("N6: %ld\n", N6);*/ 
+	intstartsec = second();
 	for (I = 1; I <= N6; I++) {
 	    J = J * (K-J) * (L-K);
 	    K = L * K - (L-J) * K;
@@ -261,6 +267,7 @@ C
 	    E1[L-1] = J + K + L;
 	    E1[K-1] = J * K * L;
 	}
+	intendsec = second();
 
 #ifdef PRINTOUT
 	IF (JJ==II)POUT(N6,J,K,E1[1],E1[2],E1[3],E1[4]);
@@ -384,12 +391,22 @@ C--------------------------------------------------------------------
 	printf("Loops: %ld, Iterations: %d, Duration: %lf sec.\n",
 			LOOP, II, finisec-startsec);
 
+	/* This is for the new metric computation: */
+	double int_time = intendsec - intstartsec;
+	double int_loops_per_sec = ((double)N6) / int_time;
+	double il_rate = int_loops_per_sec / benchmark_ilps;
+	
+	printf("Integer Arithmetic Loops (N6): %ld, Time to complete: %lf, IntLoops/second: %lf\n", N6, int_time, int_loops_per_sec);
+	printf("ILRate: %lf\n", il_rate);
+
 	KIPS = (100.0*LOOP*II)/(double)(finisec-startsec);
 	if (KIPS >= 1000.0)
 		printf("C Converted Double Precision Whetstones: %.1f MWIPS\n", KIPS/1000.0);
 	else
 		printf("C Converted Double Precision Whetstones: %.1f KWIPS\n", KIPS);
 	total_time += (finisec-startsec);
+	total_int_loops_per_second += int_loops_per_sec;
+	multiplied_il_rate *= il_rate;
 	curr_loop++;
 	if (continuous)
 		goto LCONT;
@@ -397,7 +414,9 @@ C--------------------------------------------------------------------
 		if (curr_loop < num_loops) {
 			goto LCONT;
 		}
-		printf("Average time: %lf seconds", total_time/(double)num_loops);
+		printf("Average time: %lf seconds\n", total_time/(double)num_loops);
+		printf("Average IntLoops/second: %lf\n", total_int_loops_per_second/(double)num_loops);
+		printf("Average ILRate (Geometric Mean) %lf\n", pow(multiplied_il_rate, 1.0 / (double)num_loops));
 	}
 
 	return(0);
