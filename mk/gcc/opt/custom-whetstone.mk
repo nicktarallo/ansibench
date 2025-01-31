@@ -1,0 +1,1 @@
+OPTLEVEL = -funsafe-math-optimizations
